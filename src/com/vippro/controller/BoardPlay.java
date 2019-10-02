@@ -1,6 +1,7 @@
 package com.vippro.controller;
 
 import com.vippro.model.Board;
+import com.vippro.model.Move;
 
 import java.util.Scanner;
 
@@ -8,33 +9,43 @@ public class BoardPlay {
     public void play(String maxPlayer, String minPlayer){
         Board board = new Board(true);
         board.drawBoard();
-        boolean turn = true;
+        board.setTurn(false);
         while (true){
-            if (turn){
+            if (board.isTurn()){
                 boolean check = false;
                 while (!check){
                     System.out.println("Lượt đi của "+ maxPlayer + " (chọn ô 0 - 4, trái - 0, phải - 1):");
-                    int pos = new Scanner(System.in).nextInt();
-                    int directTmp = new Scanner(System.in).nextInt();
-                    boolean direct = (directTmp == 0)?false:true;
-                    if (board.checkPickMax(pos))
-                        check = board.move(pos, direct);
+                    Move move = new Move();
+                    move.position = new Scanner(System.in).nextInt();
+                    int direct = new Scanner(System.in).nextInt();
+                    if ((direct == 0)) {
+                        move.direct = false;
+                    } else {
+                        move.direct = true;
+                    }
+                    if (board.checkPickMax(move.position))
+                        check = board.move(move.position, move.direct);
                     else check = false;
                 }
-                turn = false;
+                board.setTurn(false);
             }
             else{
                 boolean check = false;
                 while (!check){
                     System.out.println("Lượt đi của "+ minPlayer + " (chọn ô 6 - 10, trái - 0, phải - 1):");
-                    int pos = new Scanner(System.in).nextInt();
-                    int directTmp = new Scanner(System.in).nextInt();
-                    boolean direct = (directTmp == 1)?false:true;
-                    if (!board.checkPickMax(pos))
-                        check = board.move(pos, direct);
+                    Move move = new Move();
+                    move.position = new Scanner(System.in).nextInt();
+                    int direct = new Scanner(System.in).nextInt();
+                    if ((direct == 0)) {
+                        move.direct = true;
+                    } else {
+                        move.direct = false;
+                    }
+                    if (!board.checkPickMax(move.position))
+                        check = board.move(move.position, move.direct);
                     else check = false;
                 }
-                turn = true;
+                board.setTurn(true);
             }
             if (board.checkWin() != 3) break;
             board.spreadBoard();

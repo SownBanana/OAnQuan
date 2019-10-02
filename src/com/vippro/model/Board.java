@@ -99,21 +99,19 @@ public class Board {
     public void checkEat(int position, boolean direct ){
         if(direct){
             if(cells[(position + 1)%12].isEmpty() && !cells[(position + 2)%12].isEmpty() && !cells[(position +1)%12].isKing()) {
-                System.out.println("ăn được phải");
                 eat((position+2)%12);
                 checkEat((position+2)%12,direct);
             }
         }
         else{
             if(cells[(position - 1 + 12)%12].isEmpty() && !cells[(position-2 + 12)%12].isEmpty() && !cells[(position-1+12)%12].isKing()) {
-                System.out.println("ăn được trái");
                 eat((position-2+12)%12);
                 checkEat((position-2+12)%12,direct);
             }
         }
     }
     public void eat(int position){
-            System.out.println("ăn "+position);
+            System.out.println("ăn "+cells[position].getPoint() + " ô "+ position);
             if(turn) maxPoint+=cells[position].getPoint();
              else minPoint+=cells[position].getPoint();
             cells[(position)].setPoint(0);
@@ -132,8 +130,19 @@ public class Board {
         System.out.println(" Point: " + minPoint);
         System.out.println("====================");
     }
+    private int getAllPointOfBoard(){
+        int sum = 0;
+        for (int i = 0; i < 12; i++) {
+            sum += cells[i].getPoint();
+        }
+        return sum;
+    }
     public int checkWin(){  //0- min win    1- max win      2- draw     3- still play
         if (cells[5].getPoint() == 0 && cells[11].getPoint() == 0){
+            if (turn)
+                maxPoint += getAllPointOfBoard();
+            else
+                minPoint += getAllPointOfBoard();
             if (maxPoint > minPoint) return 1;
             if (maxPoint == minPoint) return 2;
             else return 0;
