@@ -9,7 +9,7 @@ public class BoardPlay {
     public void play(String maxPlayer, String minPlayer){
         Board board = new Board(true);
         board.drawBoard();
-        board.setTurn(false);
+        board.setTurn(true);
         while (true){
             if (board.isTurn()){
                 boolean check = false;

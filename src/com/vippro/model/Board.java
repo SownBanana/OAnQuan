@@ -168,8 +168,8 @@ public class Board {
         if (tmp){
             for (int i = 0; i < 5; i++) {
                 cells[i].setPoint(1);
-                maxPoint -= 5;
             }
+            maxPoint -= 5;
         }
         // check dân min
         tmp = true;
@@ -183,8 +183,8 @@ public class Board {
         if (tmp){
             for (int i = 6; i < 11; i++) {
                 cells[i].setPoint(1);
-                minPoint -= 5;
             }
+            minPoint -= 5;
         }
     }
 }
