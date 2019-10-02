@@ -130,9 +130,9 @@ public class Board {
         System.out.println(" Point: " + minPoint);
         System.out.println("====================");
     }
-    private int getAllPointOfBoard(){
+    private int getAllPointOfBoard(int s, int e){
         int sum = 0;
-        for (int i = 0; i < 12; i++) {
+        for (int i = s; i <= e; i++) {
             sum += cells[i].getPoint();
         }
         return sum;
@@ -140,9 +140,9 @@ public class Board {
     public int checkWin(){  //0- min win    1- max win      2- draw     3- still play
         if (cells[5].getPoint() == 0 && cells[11].getPoint() == 0){
             if (turn)
-                maxPoint += getAllPointOfBoard();
+                maxPoint += getAllPointOfBoard(0, 5);
             else
-                minPoint += getAllPointOfBoard();
+                minPoint += getAllPointOfBoard(6, 11);
             if (maxPoint > minPoint) return 1;
             if (maxPoint == minPoint) return 2;
             else return 0;
