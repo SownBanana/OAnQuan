@@ -13,6 +13,6 @@ public class Test {
         System.out.println("Nhập tên người chơi 2: ");
         String minPlayer = new Scanner(System.in).nextLine();
         BoardPlay boardPlay = new BoardPlay();
-        boardPlay.play(maxPlayer, minPlayer);
+        boardPlay.playWithBot(maxPlayer, minPlayer);
     }
 }

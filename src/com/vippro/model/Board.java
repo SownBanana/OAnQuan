@@ -6,6 +6,7 @@ public class Board {
     private int minPoint;           //0-false
     private boolean turn;           //1-max player
                                     //0-min player
+    private int round;
 
     public Board() {
     }
@@ -25,14 +26,16 @@ public class Board {
         this.cells = cells;
         this.maxPoint = 0;
         this.minPoint = 0;
+        this.round = 1;
         this.turn = turn;
     }
 
-    public Board(Cell[] cells, int maxPoint, int minPoint, boolean turn) {
+    public Board(Cell[] cells, int maxPoint, int minPoint, boolean turn, int round) {
         this.cells = cells;
         this.maxPoint = maxPoint;
         this.minPoint = minPoint;
         this.turn = turn;
+        this.round = round;
     }
 
     public Cell[] getCells() {
@@ -67,15 +70,23 @@ public class Board {
         this.turn = turn;
     }
 
+    public int getRound() {
+        return round;
+    }
+
+    public void setRound(int round) {
+        this.round = round;
+    }
+
     public boolean move(int position, boolean direct){         //false-left        true-right
-        if (cells[position].getPoint() != 0 && !cells[position].isKing()) {
+        if (cells[position].getPoint() != 0 && !cells[position].isKing() && !isFirstRoundWrong(position,direct)) {
             if (direct) {                //phải
                 int index = (position + 1)%12;
                 while (cells[position].getPoint() != 0) {
                     cells[index].raisePoint(1);
                     cells[position].downPoint(1);
                     index = (index + 1) % 12;
-                    drawBoard();
+//                    drawBoard();
                 }
                 if (cells[index].isEmpty())
                     checkEat((index - 1 + 12) % 12, direct);
@@ -86,16 +97,45 @@ public class Board {
                     cells[index].raisePoint(1);
                     cells[position].downPoint(1);
                     index = (index - 1 + 12) % 12;
-                    drawBoard();
+//                 drawBoard();
                 }
                 if (cells[index].isEmpty())
                     checkEat((index + 1) % 12, direct);
                 else move(index, direct);
             }
-        return true;
+            round++;
+            return true;
         }
         return false;
     }
+//    public boolean moveTry(int position, boolean direct){
+//        if (cells[position].getPoint() != 0 && !cells[position].isKing() && !isFirstRoundWrong(position,direct)) {
+//            if (direct) {                //phải
+//                int index = (position + 1)%12;
+//                while (cells[position].getPoint() != 0) {
+//                    cells[index].raisePoint(1);
+//                    cells[position].downPoint(1);
+//                    index = (index + 1) % 12;
+//                }
+//                if (cells[index].isEmpty())
+//                    checkEatFake((index - 1 + 12) % 12, direct);
+//                else move(index, direct);
+//            } else {                       //trái
+//                int index = (position - 1 + 12)%12;
+//                while (cells[position].getPoint() != 0) {
+//                    cells[index].raisePoint(1);
+//                    cells[position].downPoint(1);
+//                    index = (index - 1 + 12) % 12;
+//                }
+//                if (cells[index].isEmpty())
+//                    checkEatFake((index + 1) % 12, direct);
+//                else move(index, direct);
+//            }
+//            round++;
+//            return true;
+//        }
+//        return false;
+//    }
     public void checkEat(int position, boolean direct ){
         if(direct){
             if(cells[(position + 1)%12].isEmpty() && !cells[(position + 2)%12].isEmpty() && !cells[(position +1)%12].isKing()) {
@@ -111,12 +151,12 @@ public class Board {
         }
     }
     public void eat(int position){
-            System.out.println("ăn "+cells[position].getPoint() + " ô "+ position);
+//            System.out.println("ăn "+cells[position].getPoint() + " ô "+ position);
             if(turn) maxPoint+=cells[position].getPoint();
              else minPoint+=cells[position].getPoint();
             cells[(position)].setPoint(0);
-            drawBoard();
     }
+
     public void drawBoard(){
         System.out.println(" Point: "+maxPoint);
         System.out.println("       0   1   2   3   4   5 ");
@@ -139,10 +179,19 @@ public class Board {
     }
     public int checkWin(){  //0- min win    1- max win      2- draw     3- still play
         if (cells[5].getPoint() == 0 && cells[11].getPoint() == 0){
-            if (turn)
-                maxPoint += getAllPointOfBoard(0, 5);
-            else
-                minPoint += getAllPointOfBoard(6, 11);
+            maxPoint += getAllPointOfBoard(0, 4);
+            minPoint += getAllPointOfBoard(6, 10);
+            drawBoard();
+            if (maxPoint > minPoint) return 1;
+            if (maxPoint == minPoint) return 2;
+            else return 0;
+        }
+        else return 3;
+    }
+    public int checkWinFake(){  //0- min win    1- max win      2- draw     3- still play
+        if (cells[5].getPoint() == 0 && cells[11].getPoint() == 0){
+            maxPoint += getAllPointOfBoard(0, 4);
+            minPoint += getAllPointOfBoard(6, 10);
             if (maxPoint > minPoint) return 1;
             if (maxPoint == minPoint) return 2;
             else return 0;
@@ -186,5 +235,34 @@ public class Board {
             }
             minPoint -= 5;
         }
+    }
+    public boolean isFirstRoundWrong(int position, boolean direct){
+        if (round == 1){
+            if (turn){              //Max
+                if (position == 0 && !direct) return true;
+                if (position == 4 && direct) return true;
+            }
+            else {              //Max
+                if (position == 6 && !direct) return true;
+                if (position == 10 && direct) return true;
+            }
+        }
+        return false;
+    }
+    public void coppyBoard(Board source){
+        for (int i = 0; i<12; i++){
+            int point = source.getCells()[i].getPoint();
+            boolean isKing = source.getCells()[i].isKing();
+            this.cells[i].setPoint(point);
+            this.cells[i].setKing(isKing);
+        }
+        boolean turn = source.isTurn();
+        int minPoint = source.getMinPoint();
+        int maxPoint = source.getMaxPoint();
+        int round = source.getRound();
+        this.setTurn(turn);
+        this.setMinPoint(minPoint);
+        this.setMaxPoint(maxPoint);
+        this.setRound(round);
     }
 }
