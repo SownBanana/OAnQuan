@@ -82,10 +82,11 @@ public class BoardPlay {
             else{
                 System.out.println("Lượt đi của "+ minPlayer+
                         "<=======================================================================================================");
-                DumbBot dumbBot = new DumbBot(  5);
+                DumbBot dumbBot = new DumbBot(  8);
                 Board fakeBoard = new Board(true);
                 fakeBoard.coppyBoard(board);
                 Move move = dumbBot.minimax(fakeBoard, dumbBot.getDepth());
+                board.drawBoard();
                 System.out.println(move.toString());
 //                Move myMove = new Move();
 //                myMove.position = new Scanner(System.in).nextInt();
